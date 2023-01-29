@@ -11,15 +11,27 @@ fn = sys.argv[1]
 
 diffs = []
 samples = []
+items = []
 entry = False
 with open(fn) as f:
     lines = f.readlines()
+# Build a list of dictionaries with ts and poll
 for line in lines:
     parts = line.split("sys_poll")
     if len(parts) < 2:
         continue
     ts = float(parts[0].split(" ")[-2].replace(":", ""))
-    poll = parts[1]
+    call = parts[1]
+    items.append({"ts": ts, "call": call})
+# Sort the list by ts
+items = sorted(items, key=lambda d: d['ts'])
+# Process and plot
+for item in items:
+    if "ts" not in item or "call" not in item:
+        print(f"Malformed line {item}")
+        continue
+    ts = item.get("ts")
+    poll = item.get("call")
     if "timeout_msecs" in poll and "ffffffff" not in poll:
         entry = True
         entry_ts = ts
