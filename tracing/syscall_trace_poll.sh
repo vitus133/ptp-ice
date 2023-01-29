@@ -1,5 +1,8 @@
 #!/bin/bash
-pid=$1
+config=$(ps -ef |grep "/usr/sbin/phc2sys" |grep ? |cut -d '[' -f 2 |cut -d ']' -f 1)
+pid=$(ps -ef |grep /usr/sbin/ptp4l |grep $config |tr -s " " |cut -d " " -f 2)
+
+echo "pid $pid, config $config"
 
 echo 0 > /sys/kernel/debug/tracing/tracing_on
 echo > /sys/kernel/debug/tracing/trace
