@@ -15,7 +15,7 @@ fw_durations = [] # List of time differences between firmware start and end
 samples = [] # list of increasing sample numbers for X axis
 items = [] # list of dictionaries handy for sorting by timestamp
 entry = False # If true, we are within the transaction
-
+skip_exit =  0 # skip sys_poll exit if entry was irrelevant
 
 trace_dict = {"poll_entry": 0, "poll_exit": 1, "ice_tx_tstamp_request": 2, 
 "ice_tx_tstamp_fw_req": 3, "ice_tx_tstamp_fw_done": 4, "ice_tx_tstamp_complete": 5}
@@ -60,11 +60,16 @@ for item in items:
         tracker = [False] * len(trace_dict)
         tracker[trace_dict[call]] = True
     elif call == "sys_poll" and entry is True:
-        if "timeout_msecs" in args and "ffffffff" not in args:
+        if "ffffffff" in args:
+            skip_exit += 1
+        elif "timeout_msecs" in args :
             poll_call_ts = ts
             configured_timeout_ms = int(args.split("meout_msecs: ")[-1].replace(")\n", ""), base=16)
             tracker[trace_dict["poll_entry"]] = True
         elif "->" in args:
+            if skip_exit > 0:
+                skip_exit -= 1
+                continue
             exit_ts = ts
             tracker[trace_dict["poll_exit"]] = True
             
