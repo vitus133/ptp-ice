@@ -100,11 +100,11 @@ for item in items:
 
 
 fig, ax = plt.subplots()  
-ax.plot(samples, poll_durations)
-
 ax.set_xlabel("Sample")
 ax.set_ylabel("Poll duration, sec")
 ax.set_title("Poll duration, sec")
+
+ax.plot(poll_durations)
 
 ax.text(samples[-1]*0.1, max(poll_durations)*0.9, "\n".join((f"max: {max(poll_durations)}",
 f"min: {1000000 * min(poll_durations)} us", f"average: {round(1000000 * sum(poll_durations)/len(poll_durations),2)} us")),
@@ -123,7 +123,7 @@ ax3 = ax2.twinx()
 ax3.plot(np.arange(0, max(poll_durations), max(poll_durations)/hist_bins)[0:hist_bins], cdf, label='CDF')
 
 fig_fw, ax_fw = plt.subplots()
-ax_fw.plot(samples, fw_durations, color="gray")
+ax_fw.plot(fw_durations, color="gray")
 ax_fw.set_xlabel("Sample")
 ax_fw.set_ylabel("duration, sec")
 ax_fw.set_title("Firmware request to firmware done, sec")
